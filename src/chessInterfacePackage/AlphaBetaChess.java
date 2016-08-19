@@ -85,19 +85,28 @@ public class AlphaBetaChess {
 	public static String possibleA(int i) {
 		String list = "", oldPiece; 
 		int r = i/8, c = i%8; 
+		//This loop will just loop around the positions that the king can make around him
 		for(int j = 0; j < 9; j++) {
 			if(j != 4) {
 				try {
+					//Check to see if position being evaluated is a piece that can be captured or if it's a blank space
+					//meaning we could move there. 
 					if(Character.isLowerCase(chessboard[r-1+j/3][c-1+j%3].charAt(0)) || " ".equals(chessboard[r-1+j/3][c-1+j%3])) {
+						//Whatever is in that position, set that as oldPiece
 						oldPiece = chessboard[r-1+j/3][c-1+j%3]; 
+						//The current position of the king, set that as a blank space
 						chessboard[r][c] = " "; 
+						//Set the king in the new position that is being evaluated
 						chessboard[r-1+j/3][c-1+j%3] = "A"; 
 						int kingTemp = kingPositionC; 
+						//Set kingPositionC as the new position of the king, but just as a single int 
 						kingPositionC = i + (j/3) * 8 + j%3 - 9; 
+						//If this position is safe then add this move to the list of moves for the king 
 						if(kingSafe()) {
 							list = list + r + c + (r - 1 + j/3) + (c - 1 + j%3) + oldPiece; 
 						}
-						//Move the king back since we are just checking for moves right now
+						//Move the king back to its original spot since we are just checking for moves right now
+						//Set the other positions back as well
 						chessboard[r][c] = "A"; 
 						chessboard[r-1+j/3][c-1+j%3] = oldPiece; 
 						kingPositionC = kingTemp; 
@@ -108,7 +117,6 @@ public class AlphaBetaChess {
 			}
 		}
 		return list; //Will need to add castling later 
-		//Make sure to take time to fully understand all the math that is going on in here
 	}
 	
 	public static boolean kingSafe() {
