@@ -8,11 +8,11 @@ public class AlphaBetaChess {
 			{"r","k","b","q","a","b","k","r"},          
 			{"p","p","p","p","p","p","p","p"},      //These are black
 			{" "," "," "," "," "," "," "," "},
+			{" "," "," "," "," "," ","b"," "},
 			{" "," "," "," "," "," "," "," "},
-			{" "," "," "," "," "," "," "," "},
-			{"R"," "," "," "," "," "," "," "},
+			{" "," "," "," ","A"," "," "," "},
 			{"P","P","P","P","P","P","P","P"},      //These are white
-			{"R","K","B","Q","A","B","K","R"}
+			{"R","K","B","Q"," ","B","K","R"}
 	};
 
 	//Variables used to monitor the position of the king using a solid number
@@ -125,7 +125,40 @@ public class AlphaBetaChess {
 	}
 	
 	public static String possibleK(int i) {
-		String list = ""; 
+		String list = "", oldPiece; 
+		int r = i/8, c = i%8; 
+		for(int j = -1; j <= 1; j+=2) {
+			for(int k = -1; k <= 1; k+=2) {
+				try {
+					if(Character.isLowerCase(chessboard[r + j][c + k * 2].charAt(0)) || " ".equals(chessboard[r + j][c + k * 2])) {
+						oldPiece = chessboard[r + j][c + k * 2]; 
+						chessboard[r][c] = " "; 
+						chessboard[r + j][c + k * 2] = "K"; 
+						if(kingSafe()) {
+							list = list + r + c + (r + j) + (c + k * 2) + oldPiece; 
+						}
+						chessboard[r][c] = "K"; 
+						chessboard[r + j][c + k * 2] = oldPiece; 
+					}
+				} catch (Exception e) {
+
+				}
+				try {
+					if(Character.isLowerCase(chessboard[r + j * 2][c + k].charAt(0)) || " ".equals(chessboard[r + j * 2][c + k])) {
+						oldPiece = chessboard[r + j * 2][c + k]; 
+						chessboard[r][c] = " "; 
+						chessboard[r + j * 2][c + k] = "K"; 
+						if(kingSafe()) {
+							list = list + r + c + (r + j * 2) + (c + k) + oldPiece; 
+						}
+						chessboard[r][c] = "K"; 
+						chessboard[r + j * 2][c + k] = oldPiece; 
+					}
+				} catch (Exception e) {
+
+				}
+			}
+		}
 		return list; 
 	}
 	
@@ -243,6 +276,53 @@ public class AlphaBetaChess {
 	}
 	
 	public static boolean kingSafe() {
+		//Bishop or Queen
+		//Picked these two since these are the ones to most likely pose the greatest danger to the King, meaning it
+		//would end the search quicker. 
+		int temp = 1; 
+		for(int i = -1; i <= 1; i+=2) {
+			for(int j = -1; j <= 1; j+=2) {
+				try {
+					while(" ".equals(chessboard[kingPositionC/8 + temp * i][kingPositionC%8 + temp * j])) {
+							temp++;
+						}
+						if("b".equals(chessboard[kingPositionC/8 + temp * i][kingPositionC%8 + temp * j]) ||
+								"q".equals(chessboard[kingPositionC/8 + temp * i][kingPositionC%8 + temp * j])) {
+							return false;  
+					}
+				} catch (Exception e) {
+						
+					}
+				temp = 1; 
+			}
+		}
+		//Rook or Queen
+		for(int i = -1; i <= 1; i+=2) {
+				try {
+					while(" ".equals(chessboard[kingPositionC/8][kingPositionC%8 + temp * i])) {
+							temp++;
+						}
+						if("r".equals(chessboard[kingPositionC/8][kingPositionC%8 + temp * i]) ||
+								"q".equals(chessboard[kingPositionC/8][kingPositionC%8 + temp * i])) {
+							return false;  
+					}
+				} catch (Exception e) {
+						
+					}
+				temp = 1; 
+				try {
+					while(" ".equals(chessboard[kingPositionC/8 + temp * i][kingPositionC%8])) {
+							temp++;
+						}
+						if("r".equals(chessboard[kingPositionC/8 + temp * i][kingPositionC%8]) ||
+								"q".equals(chessboard[kingPositionC/8 + temp * i][kingPositionC%8])) {
+							return false;  
+					}
+				} catch (Exception e) {
+						
+					}
+				temp = 1; 
+		}
 		return true; 
 	}
 }
