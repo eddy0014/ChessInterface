@@ -1,6 +1,7 @@
 package chessInterfacePackage;
 
 import javax.swing.*;
+import java.util.*; 
 
 public class AlphaBetaChess {
 
@@ -35,6 +36,41 @@ public class AlphaBetaChess {
 		frame.add(ui); 
 		frame.setVisible(true);*/
 		System.out.println(possibleMoves());
+		makeMove("6050 "); 
+		for(int i = 0; i < 8; i++) {
+			System.out.println(Arrays.toString(chessboard[i])); 
+		}
+		undoMove("6050 "); 
+		for(int i = 0; i < 8; i++) {
+			System.out.println(Arrays.toString(chessboard[i])); 
+		}
+	}
+	
+	public static void makeMove(String move) {
+		if(move.charAt(4) != 'P') {
+			chessboard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = 
+					chessboard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
+			chessboard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " "; 
+		}
+		//If pawn promotion
+		else {
+			chessboard[1][Character.getNumericValue(move.charAt(0))] = " "; 
+			chessboard[0][Character.getNumericValue(move.charAt(1))] = String.valueOf(move.charAt(3)); 
+		}
+	}
+	
+	public static void undoMove(String move) {
+		if(move.charAt(4) != 'P') {
+			chessboard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = 
+					chessboard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))];
+			chessboard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] =
+					String.valueOf(move.charAt(4)); 
+		}
+		//If pawn promotion
+		else {
+			chessboard[1][Character.getNumericValue(move.charAt(0))] = "P"; 
+			chessboard[0][Character.getNumericValue(move.charAt(1))] = String.valueOf(move.charAt(2)); 
+		}
 	}
 
 	/**
@@ -71,7 +107,8 @@ public class AlphaBetaChess {
 		String list = "", oldPiece; 
 		int r = i/8, c = i%8; 
 		for(int j = -1; j <= 1; j +=2) {
-			try {//Look for possible captures
+			//Look for possible captures
+			try {
 				if(Character.isLowerCase(chessboard[r - 1][c + j].charAt(0)) && i >= 16) {
 					oldPiece = chessboard[r - 1][c + j]; 
 					chessboard[r][c] = " "; 
@@ -85,7 +122,8 @@ public class AlphaBetaChess {
 			} catch(Exception e) {
 				
 			}
-			try {//Promotion and capture
+			//Promotion and capture
+			try {
 				if(Character.isLowerCase(chessboard[r - 1][c + j].charAt(0)) && i < 16) {
 					String[] temp = {"Q", "R", "B", "K"}; 
 					for(int k = 0; k < 4; k++) {
@@ -103,6 +141,55 @@ public class AlphaBetaChess {
 			} catch(Exception e) {
 				
 			}
+		}
+		//Move one up
+		try { 
+			if(" ".equals(chessboard[r - 1][c]) && i >= 16) {
+				oldPiece = chessboard[r - 1][c]; 
+				chessboard[r][c] = " "; 
+				chessboard[r - 1][c] = "P"; 
+				if(kingSafe()) {
+					list = list + r + c + (r - 1) + c + oldPiece; 
+				}
+				chessboard[r][c] = "P"; 
+				chessboard[r - 1][c] = oldPiece; 
+			}
+		} catch(Exception e) {
+			
+		}
+		//Promotion and no capture 
+		try { 
+			if(" ".equals(chessboard[r - 1][c]) && i < 16) {
+				String[] temp = {"Q", "R", "B", "K"}; 
+				for(int k = 0; k < 4; k++) {
+					oldPiece = chessboard[r - 1][c]; 
+					chessboard[r][c] = " "; 
+					chessboard[r - 1][c] = temp[k];  
+					if(kingSafe()) {
+						//Column1, column2, captured piece, new piece, P
+						list = list + c + c + oldPiece + temp[k] + "P";  
+					}
+					chessboard[r][c] = "P"; 
+					chessboard[r - 1][c] = oldPiece; 
+				}
+			}
+		} catch(Exception e) {
+			
+		}
+		//Move two up
+		try { 
+			if(" ".equals(chessboard[r - 1][c]) && " ".equals(chessboard[r - 2][c]) && i >= 48) {
+				oldPiece = chessboard[r - 2][c]; 
+				chessboard[r][c] = " "; 
+				chessboard[r - 2][c] = "P"; 
+				if(kingSafe()) {
+					list = list + r + c + (r - 2) + c + oldPiece; 
+				}
+				chessboard[r][c] = "P"; 
+				chessboard[r - 2][c] = oldPiece; 
+			}
+		} catch(Exception e) {
+
 		}
 		
 		return list; 
