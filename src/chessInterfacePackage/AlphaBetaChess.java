@@ -8,17 +8,26 @@ public class AlphaBetaChess {
 			{"r","k","b","q","a","b","k","r"},          
 			{"p","p","p","p","p","p","p","p"},      //These are black
 			{" "," "," "," "," "," "," "," "},
-			{" "," "," "," "," "," ","b"," "},
 			{" "," "," "," "," "," "," "," "},
-			{" "," "," "," ","A"," "," "," "},
+			{" "," "," "," "," "," "," "," "},
+			{" "," "," "," "," "," "," "," "},
 			{"P","P","P","P","P","P","P","P"},      //These are white
-			{"R","K","B","Q"," ","B","K","R"}
+			{"R","K","B","Q","A","B","K","R"}
 	};
 
 	//Variables used to monitor the position of the king using a solid number
 	static int kingPositionC, kingPositionL; 
 	
 	public static void main(String[] args) {
+		
+		//Scan each spot to find the position of both Kings
+		while(!"A".equals(chessboard[kingPositionC/8][kingPositionC%8])) {
+			kingPositionC++; 
+		}
+		while(!"a".equals(chessboard[kingPositionL/8][kingPositionL%8])) {
+			kingPositionL++; 
+		}
+		
 		/*JFrame frame = new JFrame("Title goes here!"); 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		frame.setSize(500, 500); 
@@ -59,7 +68,43 @@ public class AlphaBetaChess {
 	 * list 
 	 */
 	public static String possibleP(int i) {
-		String list = ""; 
+		String list = "", oldPiece; 
+		int r = i/8, c = i%8; 
+		for(int j = -1; j <= 1; j +=2) {
+			try {//Look for possible captures
+				if(Character.isLowerCase(chessboard[r - 1][c + j].charAt(0)) && i >= 16) {
+					oldPiece = chessboard[r - 1][c + j]; 
+					chessboard[r][c] = " "; 
+					chessboard[r - 1][c + j] = "P"; 
+					if(kingSafe()) {
+						list = list + r + c + (r - 1) + (c + j) + oldPiece; 
+					}
+					chessboard[r][c] = "P"; 
+					chessboard[r - 1][c + j] = oldPiece; 
+				}
+			} catch(Exception e) {
+				
+			}
+			try {//Promotion and capture
+				if(Character.isLowerCase(chessboard[r - 1][c + j].charAt(0)) && i < 16) {
+					String[] temp = {"Q", "R", "B", "K"}; 
+					for(int k = 0; k < 4; k++) {
+						oldPiece = chessboard[r - 1][c + j]; 
+						chessboard[r][c] = " "; 
+						chessboard[r - 1][c + j] = temp[k];  
+						if(kingSafe()) {
+							//Column1, column2, captured piece, new piece, P
+							list = list + c + (c + j) + oldPiece + temp[k] + "P";  
+						}
+						chessboard[r][c] = "P"; 
+						chessboard[r - 1][c + j] = oldPiece; 
+					}
+				}
+			} catch(Exception e) {
+				
+			}
+		}
+		
 		return list; 
 	}
 	
@@ -296,6 +341,7 @@ public class AlphaBetaChess {
 				temp = 1; 
 			}
 		}
+		
 		//Rook or Queen
 		for(int i = -1; i <= 1; i+=2) {
 				try {
@@ -323,6 +369,65 @@ public class AlphaBetaChess {
 					}
 				temp = 1; 
 		}
+		
+		//Knight 
+		for(int i = -1; i <= 1; i+=2) {
+			for(int j = -1; j <= 1; j+=2) {
+				try {
+						if("k".equals(chessboard[kingPositionC/8 + i][kingPositionC%8 + j * 2])) {
+							return false;  
+					}
+				} catch (Exception e) {
+						//If the knight is on the edge of the board, this catch statement will prevent any errors from
+						//happening when searching outside the board and just move on 
+					}
+				try {
+					//This is in its own try-catch and not with the other one because if the first search causes an error,
+					//then it will just skip the second and go straight to catch that error
+					if("k".equals(chessboard[kingPositionC/8 + i * 2][kingPositionC%8 + j])) {
+						return false;  
+				}
+			} catch (Exception e) {
+					
+				}
+			}
+		}
+		
+		//Pawn
+		//Don't bother checking if the King is alongside or behind the initial enemy pawn line, since no pawn would be able to 
+		//look back and attack
+		if(kingPositionC >= 16) {
+			try {
+				if("p".equals(chessboard[kingPositionC/8 - 1][kingPositionC%8 - 1])) {
+					return false;  
+				}
+			} catch (Exception e) {
+
+			}
+			try {
+				if("p".equals(chessboard[kingPositionC/8 - 1][kingPositionC%8 + 1])) {
+					return false;  
+				}
+			} catch (Exception e) {
+
+			}
+			//King
+			//This is placed at the end of the search since it is the least likely scenario to happen.
+			for(int i = -1; i <= 1; i++) {
+				for(int j = -1; j <= 1; j++) {
+					if(i != 0 || j != 0) {
+						try {
+							if("a".equals(chessboard[kingPositionC/8 + i][kingPositionC%8 + j])) {
+								return false;  
+							}
+						} catch (Exception e) {
+							
+						}
+					}
+				}
+			}
+		}
+		
 		return true; 
 	}
 }
