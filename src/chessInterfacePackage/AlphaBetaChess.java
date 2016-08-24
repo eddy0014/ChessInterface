@@ -46,6 +46,21 @@ public class AlphaBetaChess {
 		}
 	}
 	
+	public static String alphaBeta(int depth, int beta, int alpha, String move, int player) {
+		String list = possibleMoves(); 
+		//If the search hits the end of the line
+		if(depth == 0 || list.length() == 0) {
+			return move + (rating() * (player * 2 - 1));  
+		}
+		//Sort the moves from best to worst later
+		player = 1 - player; //Player is either a 1 or 0 
+		for(int i = 0; i < list.length(); i+=5) {
+			list.substring(i, i + 5); 
+		}
+		
+		return ""; 
+	}
+	
 	public static void makeMove(String move) {
 		if(move.charAt(4) != 'P') {
 			chessboard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = 
@@ -405,6 +420,10 @@ public class AlphaBetaChess {
 			}
 		}
 		return list; //Will need to add castling later 
+	}
+	
+	public static int rating() {
+		return 0; 
 	}
 	
 	public static boolean kingSafe() {
