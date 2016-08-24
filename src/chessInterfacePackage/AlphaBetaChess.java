@@ -18,6 +18,7 @@ public class AlphaBetaChess {
 
 	//Variables used to monitor the position of the king using a solid number
 	static int kingPositionC, kingPositionL; 
+	static int globalDepth = 4; 
 	
 	public static void main(String[] args) {
 		
@@ -55,10 +56,47 @@ public class AlphaBetaChess {
 		//Sort the moves from best to worst later
 		player = 1 - player; //Player is either a 1 or 0 
 		for(int i = 0; i < list.length(); i+=5) {
-			list.substring(i, i + 5); 
+			makeMove(list.substring(i, i + 5));  
+			flipBoard(); 
+			String returnString = alphaBeta(depth - 1, beta, alpha, list.substring(i, i + 5), player); 
+			int value = Integer.valueOf(returnString.substring(5)); 
+			flipBoard(); 
+			undoMove(list.substring(i, i + 5)); 
+			if(player == 0) {
+				if(value <= beta) {
+					beta = value; 
+					if(depth == globalDepth) {
+						move = returnString.substring(0, 5); 
+					}
+				}
+			}
+			else {
+				if(value > alpha) {
+					alpha = value; 
+					if(depth == globalDepth) {
+						move = returnString.substring(0, 5); 
+					}
+				}
+			}
+			if(alpha >= beta) {
+				if(player == 0) {
+					return move + beta; 
+				}
+				else {
+					return move + alpha; 
+				}
+			}
 		}
+		if(player == 0) {
+			return move + beta; 
+		}
+		else {
+			return move + alpha; 
+		}
+	}
+	
+	public static void flipBoard() {
 		
-		return ""; 
 	}
 	
 	public static void makeMove(String move) {
