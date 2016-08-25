@@ -37,22 +37,45 @@ public class AlphaBetaChess {
 		frame.add(ui); 
 		frame.setVisible(true);*/
 		System.out.println(possibleMoves());
+		
+		//This next line was used for testing alphaBeta() 
+		//System.out.println(alphaBeta(globalDepth, 1000000, -1000000, "", 0)); 
+		
+		makeMove(alphaBeta(globalDepth, 1000000, -1000000, "", 0)); 
+		/*
 		makeMove("6050 "); 
 		for(int i = 0; i < 8; i++) {
 			System.out.println(Arrays.toString(chessboard[i])); 
 		}
-		undoMove("6050 "); 
+		undoMove("6050 "); */
 		for(int i = 0; i < 8; i++) {
 			System.out.println(Arrays.toString(chessboard[i])); 
 		}
 	}
 	
 	public static String alphaBeta(int depth, int beta, int alpha, String move, int player) {
+		//Return in the format of x1,y1,x2,y2,captured piece,score 
+		
+	    //This next line is temporary that is used for testing if it works
+		//String list = "1"; 
+		
 		String list = possibleMoves(); 
 		//If the search hits the end of the line
 		if(depth == 0 || list.length() == 0) {
-			return move + (rating() * (player * 2 - 1));  
+			return move + (rating()* (player * 2 - 1));  //* (player * 2 - 1) remove if testing
 		}
+	   
+		//Temporary used for testing alphaBeta() 
+		/*
+		list = ""; 
+		System.out.print("How many moves are there?: "); 
+		Scanner sc = new Scanner(System.in); 
+		int temp = sc.nextInt(); 
+		for(int i = 0; i < temp; i++) {
+			list += "1111b"; 
+		}*/
+	    //End of temporary
+		
 		//Sort the moves from best to worst later
 		player = 1 - player; //Player is either a 1 or 0 
 		for(int i = 0; i < list.length(); i+=5) {
@@ -96,7 +119,26 @@ public class AlphaBetaChess {
 	}
 	
 	public static void flipBoard() {
-		
+		String temp; 
+		for(int i = 0; i < 32; i++) {
+			int r = i/8, c = i%8; 
+			if(Character.isUpperCase(chessboard[r][c].charAt(0))) {
+				temp = chessboard[r][c].toLowerCase(); 
+			}
+			else {
+				temp = chessboard[r][c].toUpperCase(); 
+			}
+			if(Character.isUpperCase(chessboard[7 - r][7 - c].charAt(0))) {
+				chessboard[r][c] = chessboard[7 - r][7 - c].toLowerCase(); 
+			}
+			else {
+				chessboard[r][c] = chessboard[7 - r][7 - c].toUpperCase();
+			}
+			chessboard[7 - r][7 - c] = temp; 
+		}
+		int kingTemp = kingPositionC; 
+		kingPositionC = 63 - kingPositionL; 
+		kingPositionL = 63 - kingTemp; 
 	}
 	
 	public static void makeMove(String move) {
@@ -104,6 +146,10 @@ public class AlphaBetaChess {
 			chessboard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = 
 					chessboard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			chessboard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " "; 
+			//Deals with the flip of the board
+			if("A".equals(chessboard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))])) {
+				kingPositionC = 8 * Character.getNumericValue(move.charAt(2)) + Character.getNumericValue(move.charAt(3));
+			}
 		}
 		//If pawn promotion
 		else {
@@ -118,6 +164,10 @@ public class AlphaBetaChess {
 					chessboard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))];
 			chessboard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] =
 					String.valueOf(move.charAt(4)); 
+			//Deals with the flip of the board
+			if("A".equals(chessboard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))])) {
+				kingPositionC = 8 * Character.getNumericValue(move.charAt(0)) + Character.getNumericValue(move.charAt(1));
+			}
 		}
 		//If pawn promotion
 		else {
@@ -461,6 +511,11 @@ public class AlphaBetaChess {
 	}
 	
 	public static int rating() {
+		//All this is temporary used for testing
+		/*
+		System.out.print("What is the score?: "); 
+		Scanner sc = new Scanner(System.in); 
+		return sc.nextInt(); */
 		return 0; 
 	}
 	
