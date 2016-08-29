@@ -30,12 +30,13 @@ public class AlphaBetaChess {
 			kingPositionL++; 
 		}
 		
-		/*JFrame frame = new JFrame("Title goes here!"); 
+		//Draw the graphics
+		JFrame frame = new JFrame("Title goes here!"); 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		frame.setSize(500, 500); 
 		UserInterface ui = new UserInterface(); 
 		frame.add(ui); 
-		frame.setVisible(true);*/
+		frame.setVisible(true);
 		System.out.println(possibleMoves());
 		
 		//This next line was used for testing alphaBeta() 
