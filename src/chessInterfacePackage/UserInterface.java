@@ -96,12 +96,12 @@ public class UserInterface extends JPanel implements MouseListener, MouseMotionL
 				if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(AlphaBetaChess.chessboard[mouseY/squareSize][mouseX/squareSize])) {
 					//Pawn promotion move
 					//Right now, this is assuming that the player picks a Queen as the new piece from promotion
-					dragMove = "" + mouseX/squareSize + newMouseX/squareSize + AlphaBetaChess.chessboard[mouseY/squareSize][newMouseX/squareSize] + "QP";
+					dragMove = "" + mouseX/squareSize + newMouseX/squareSize + AlphaBetaChess.chessboard[newMouseY/squareSize][newMouseX/squareSize] + "QP";
 				}
 				else {
 					//Regular move 
 					dragMove = "" + mouseY/squareSize + mouseX/squareSize + newMouseY/squareSize + newMouseX/squareSize + 
-							AlphaBetaChess.chessboard[mouseY/squareSize][newMouseX/squareSize]; 
+							AlphaBetaChess.chessboard[newMouseY/squareSize][newMouseX/squareSize]; 
 				}
 				//Check to see if the move made is in the compiled list of possible moves
 				String userPossibilities = AlphaBetaChess.possibleMoves(); 
