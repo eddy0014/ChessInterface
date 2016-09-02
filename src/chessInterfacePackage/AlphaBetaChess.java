@@ -18,6 +18,7 @@ public class AlphaBetaChess {
 
 	//Variables used to monitor the position of the king using a solid number
 	static int kingPositionC, kingPositionL; 
+	static int humanAsWhite = -1; //1 = human as white, 0 = human as black
 	static int globalDepth = 4; 
 	
 	public static void main(String[] args) {
@@ -42,7 +43,16 @@ public class AlphaBetaChess {
 		//This next line was used for testing alphaBeta() 
 		//System.out.println(alphaBeta(globalDepth, 1000000, -1000000, "", 0)); 
 		
-		makeMove(alphaBeta(globalDepth, 1000000, -1000000, "", 0)); 
+		//This is to determine who is playing what
+		Object[] options = {"Computer", "Human"}; 
+		humanAsWhite = JOptionPane.showOptionDialog(null, "Who should play as white?", "ABC Options",
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
+		if(humanAsWhite == 0) {
+			makeMove(alphaBeta(globalDepth, 1000000, -1000000, "", 0));
+			flipBoard(); 
+			frame.repaint(); 
+		}
+		 
 		/*
 		makeMove("6050 "); 
 		for(int i = 0; i < 8; i++) {
@@ -63,7 +73,7 @@ public class AlphaBetaChess {
 		String list = possibleMoves(); 
 		//If the search hits the end of the line
 		if(depth == 0 || list.length() == 0) {
-			return move + (rating()* (player * 2 - 1));  //* (player * 2 - 1) remove if testing
+			return move + (Rating.rating()* (player * 2 - 1));  //* (player * 2 - 1) remove if testing
 		}
 	   
 		//Temporary used for testing alphaBeta() 
@@ -509,15 +519,6 @@ public class AlphaBetaChess {
 			}
 		}
 		return list; //Will need to add castling later 
-	}
-	
-	public static int rating() {
-		//All this is temporary used for testing
-		/*
-		System.out.print("What is the score?: "); 
-		Scanner sc = new Scanner(System.in); 
-		return sc.nextInt(); */
-		return 0; 
 	}
 	
 	public static boolean kingSafe() {
