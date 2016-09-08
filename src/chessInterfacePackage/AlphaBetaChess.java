@@ -73,7 +73,7 @@ public class AlphaBetaChess {
 		String list = possibleMoves(); 
 		//If the search hits the end of the line
 		if(depth == 0 || list.length() == 0) {
-			return move + (Rating.rating()* (player * 2 - 1));  //* (player * 2 - 1) remove if testing
+			return move + (Rating.rating(list.length(), depth)* (player * 2 - 1));  //* (player * 2 - 1) remove if testing
 		}
 	   
 		//Temporary used for testing alphaBeta() 
