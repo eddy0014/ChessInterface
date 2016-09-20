@@ -48,7 +48,15 @@ public class AlphaBetaChess {
 		humanAsWhite = JOptionPane.showOptionDialog(null, "Who should play as white?", "ABC Options",
 				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
 		if(humanAsWhite == 0) {
+			//Start recording time
+			long startTime = System.currentTimeMillis(); 
+			
 			makeMove(alphaBeta(globalDepth, 1000000, -1000000, "", 0));
+			
+			//End time for the move
+			long endTime = System.currentTimeMillis();
+			System.out.println("That took " + (endTime - startTime) + " milliseconds");
+			
 			flipBoard(); 
 			frame.repaint(); 
 		}
@@ -87,7 +95,9 @@ public class AlphaBetaChess {
 		}*/
 	    //End of temporary
 		
-		//Sort the moves from best to worst later
+		//Sort the moves
+		list = sortMoves(list); 
+		
 		player = 1 - player; //Player is either a 1 or 0 
 		for(int i = 0; i < list.length(); i+=5) {
 			makeMove(list.substring(i, i + 5));  
@@ -519,6 +529,42 @@ public class AlphaBetaChess {
 			}
 		}
 		return list; //Will need to add castling later 
+	}
+	
+	/**
+	 * This is not sorting the whole list of moves. It is only taking the best 5 or 6 moves and then sorting them.
+	 * There are different ways to rate each move for sorting: rate the material or check which piece is captured 
+	 * after the move. This sorting will rate the move with the expense of time. 
+	 */
+	public static String sortMoves(String list) {
+		//Have an array with the score
+		int[] score = new int[list.length() / 5]; 
+		for(int i = 0; i < list.length(); i += 5) {
+			makeMove(list.substring(i, i + 5)); 
+			score[i/5] = -Rating.rating(-1, 0); 
+			undoMove(list.substring(i, i + 5)); 
+		}
+		//Every time a best move is found, it will be added to newListA, and then taken out of newListB. In the end
+		//it will return newListA and then added to it newListB. 
+		String newListA = "", newListB = list;
+		
+		//This loop will look for the best move with only the first few moves
+		//This will only go through 6 moves or is less, just the length
+		for(int i = 0; i < Math.min(6, list.length()/5); i ++) {
+			int max = -1000000, maxLocation = 0; 
+			for(int j = 0; j < list.length()/5; j++) {
+				if(score[j] > max) {
+					max = score[j]; 
+					maxLocation = j; 
+				}
+			}
+			score[maxLocation] = -1000000; 
+			newListA += list.substring(maxLocation * 5, maxLocation * 5 + 5); 
+			//This removes the move from newListB
+			newListB = newListB.replace(list.substring(maxLocation * 5, maxLocation * 5 + 5), ""); 
+		}
+		
+		return newListA + newListB; 
 	}
 	
 	public static boolean kingSafe() {
