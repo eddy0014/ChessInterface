@@ -319,12 +319,14 @@ public class AlphaBetaChess {
 		return list; 
 	}
 	
+	//Possible moves for the Rook
 	public static String possibleR(int i) {
 		String list = "", oldPiece; 
 		int r = i/8, c = i%8; 
 		int temp = 1; 
 		for(int j = -1; j <= 1; j +=2) {
 			try {
+				//Keep checking if there is an empty spot and add it to the list if possible. 
 				while(" ".equals(chessboard[r][c + temp * j])) {
 					oldPiece = chessboard[r][c + temp * j]; 
 					chessboard[r][c] = " "; 
@@ -336,6 +338,7 @@ public class AlphaBetaChess {
 					chessboard[r][c + temp * j] = oldPiece; 
 					temp++; 
 				}
+				//If an enemy piece if encountered, add the capture to the list if possible. 
 				if(Character.isLowerCase(chessboard[r][c + temp * j].charAt(0))) {
 					oldPiece = chessboard[r][c + temp * j]; 
 					chessboard[r][c] = " "; 
@@ -351,6 +354,7 @@ public class AlphaBetaChess {
 			}
 			temp = 1; 
 			try {
+				//Keep checking if there is an empty spot and add it to the list if possible.
 				while(" ".equals(chessboard[r + temp * j][c])) {
 					oldPiece = chessboard[r + temp * j][c]; 
 					chessboard[r][c] = " "; 
@@ -362,6 +366,7 @@ public class AlphaBetaChess {
 					chessboard[r + temp * j][c] = oldPiece; 
 					temp++; 
 				}
+				//If an enemy piece if encountered, add the capture to the list if possible. 
 				if(Character.isLowerCase(chessboard[r + temp * j][c].charAt(0))) {
 					oldPiece = chessboard[r + temp * j][c]; 
 					chessboard[r][c] = " "; 
@@ -380,12 +385,14 @@ public class AlphaBetaChess {
 		return list; 
 	}
 	
+	//Possible moves for the Knight
 	public static String possibleK(int i) {
 		String list = "", oldPiece; 
 		int r = i/8, c = i%8; 
 		for(int j = -1; j <= 1; j+=2) {
 			for(int k = -1; k <= 1; k+=2) {
 				try {
+					//Check to see if the move is an empty spot or an enemy position and add to list if possible
 					if(Character.isLowerCase(chessboard[r + j][c + k * 2].charAt(0)) || " ".equals(chessboard[r + j][c + k * 2])) {
 						oldPiece = chessboard[r + j][c + k * 2]; 
 						chessboard[r][c] = " "; 
@@ -400,6 +407,7 @@ public class AlphaBetaChess {
 
 				}
 				try {
+					//Check to see if the move is an empty spot or an enemy position and add to list if possible
 					if(Character.isLowerCase(chessboard[r + j * 2][c + k].charAt(0)) || " ".equals(chessboard[r + j * 2][c + k])) {
 						oldPiece = chessboard[r + j * 2][c + k]; 
 						chessboard[r][c] = " "; 
@@ -418,6 +426,7 @@ public class AlphaBetaChess {
 		return list; 
 	}
 	
+	//Possible moves for the Bishop
 	public static String possibleB(int i) {
 		String list = "", oldPiece; 
 		int r = i/8, c = i%8; 
@@ -425,6 +434,7 @@ public class AlphaBetaChess {
 		for(int j = -1; j <= 1; j+=2) {
 			for(int k = -1; k <= 1; k+=2) {
 				try {
+					//Check to see if there is an empty and add it to the list if possible
 					while(" ".equals(chessboard[r + temp * j][c + temp * k])) {
 						oldPiece = chessboard[r + temp * j][c + temp * k]; 
 						chessboard[r][c] = " "; 
@@ -436,6 +446,7 @@ public class AlphaBetaChess {
 						chessboard[r + temp * j][c + temp * k] = oldPiece; 
 						temp++; 
 					}
+					//If it's an enemy position, add the capture to the list if possible
 					if(Character.isLowerCase(chessboard[r + temp * j][c + temp * k].charAt(0))) {
 						oldPiece = chessboard[r + temp * j][c + temp * k]; 
 						chessboard[r][c] = " "; 
