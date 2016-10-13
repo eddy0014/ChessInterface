@@ -1,7 +1,10 @@
 package chessInterfacePackage;
 
 import javax.swing.*;
-import java.util.*; 
+import java.util.*;
+import java.util.concurrent.TimeUnit; 
+
+
 
 public class AlphaBetaChess {
 
@@ -19,7 +22,9 @@ public class AlphaBetaChess {
 	//Variables used to monitor the position of the king using a solid number
 	static int kingPositionC, kingPositionL; 
 	static int humanAsWhite = -1; //1 = human as white, 0 = human as black
-	static int globalDepth = 4; 
+	static int globalDepth = 3; 
+	
+	static boolean myPlayerTurn = true;
 	
 	public static void main(String[] args) {
 		
@@ -32,26 +37,26 @@ public class AlphaBetaChess {
 		}
 		
 		//Draw the graphics
-		JFrame frame = new JFrame("Title goes here!"); 
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+		//JFrame frame = new JFrame("Title goes here!"); 
+		/*frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		frame.setSize(500, 500); 
 		UserInterface ui = new UserInterface(); 
 		frame.add(ui); 
-		frame.setVisible(true);
-		System.out.println(possibleMoves());
+		frame.setVisible(true);*/
+		//System.out.println(possibleMoves());
 		
 		//This next line was used for testing alphaBeta() 
 		//System.out.println(alphaBeta(globalDepth, 1000000, -1000000, "", 0)); 
 		
 		//This is to determine who is playing what
-		Object[] options = {"Computer", "Human"}; 
+		/*Object[] options = {"Computer", "Human"}; 
 		humanAsWhite = JOptionPane.showOptionDialog(null, "Who should play as white?", "ABC Options",
 				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
 		if(humanAsWhite == 0) {
 			//Start recording time
 			long startTime = System.currentTimeMillis(); 
 			
-			makeMove(alphaBeta(globalDepth, 1000000, -1000000, "", 0));
+			makeMove(alphaBeta(globalDepth, 1000000, -1000000, "", 0)); 
 			
 			//End time for the move
 			long endTime = System.currentTimeMillis();
@@ -59,17 +64,56 @@ public class AlphaBetaChess {
 			
 			flipBoard(); 
 			frame.repaint(); 
+		}*/
+		
+		while(1 == 1) {
+		//Start recording time
+		long startTime = System.currentTimeMillis(); 
+		
+		makeMove(alphaBeta(globalDepth, 1000000, -1000000, "", 0)); 
+		
+		//End time for the move
+		long endTime = System.currentTimeMillis();
+		//System.out.println("That took " + (endTime - startTime) + " milliseconds");
+		
+		printBoard(myPlayerTurn); 
+		
+		flipBoard(); 
+		
+		try {
+		    Thread.sleep(5000);
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
 		}
-		 
+		}
 		/*
 		makeMove("6050 "); 
 		for(int i = 0; i < 8; i++) {
 			System.out.println(Arrays.toString(chessboard[i])); 
 		}
 		undoMove("6050 "); */
-		for(int i = 0; i < 8; i++) {
+		/*for(int i = 0; i < 8; i++) {
 			System.out.println(Arrays.toString(chessboard[i])); 
+		}*/
+	}
+	
+	public static void printBoard(boolean myPlayerTurnStatus) {
+		if(myPlayerTurnStatus) {
+			for(int i = 0; i < 8; i++) {
+				System.out.println(Arrays.toString(chessboard[i])); 
+			}
+			System.out.println("\n");
 		}
+		else {
+			flipBoard();
+			for(int i = 0; i < 8; i++) {
+				System.out.println(Arrays.toString(chessboard[i])); 
+			}
+			System.out.println("\n");
+			flipBoard();
+		}
+		
+		myPlayerTurn = !myPlayerTurnStatus; 
 	}
 	
 	public static String alphaBeta(int depth, int beta, int alpha, String move, int player) {
@@ -164,6 +208,7 @@ public class AlphaBetaChess {
 	
 	public static void makeMove(String move) {
 		if(move.charAt(4) != 'P') {
+			//The piece/value of the old position will be moved to the new position
 			chessboard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = 
 					chessboard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			chessboard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " "; 
@@ -219,6 +264,13 @@ public class AlphaBetaChess {
 				break;
 			}
 		}
+		
+		//If there are no moves available to make, exit the game
+		if(list.length() == 0) {
+			System.out.println("Exiting...");
+			System.exit(0); 
+		}
+		
 		return list; 
 	}
 	
